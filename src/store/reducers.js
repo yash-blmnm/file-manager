@@ -72,10 +72,10 @@ export const folders = (state = initialState, action) => {
             // // console.log(pathNames)
             // // console.log(findFolderInNestedTree(state, pathNames));
             // console.log(state);
-            const currentFolder = path && path.length > 1 ? findFolderInNestedTree(state.folders, path.split('/')) : state.currentFolder;
+            // const currentFolder = path && path.length > 1 ? findFolderInNestedTree(state.folders, path.split('/')) : state.currentFolder;
             return {
                 ...state,
-                currentFolder: currentFolder
+                // currentFolder: currentFolder
             }
         }
         case GET_ALL_FOLDERS: {

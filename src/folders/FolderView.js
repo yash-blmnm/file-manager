@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 }));
   
 
-const FolderView =  ( {currentFolder, dispatch} ) => {
+const FolderView =  ( {currentFolder, getCurFolder} ) => {
     // const folders = dB.ref("folders");
     // console.log(folders);
     
@@ -60,14 +60,14 @@ const FolderView =  ( {currentFolder, dispatch} ) => {
     const handleClick = () => {
         setOpen(!open);
     };
-    
+    console.log(location);
     useEffect(() => {
         // console.log(123);
         // // if(folders.path){
-        // getCurFolder(location.pathname);
+        getCurFolder(location.pathname);
         // // }
         
-    }, [location]);
+    }, [location.pathname]);
 
     // React.useEffect(() => { addTodo(location.pathname) }, [])
     

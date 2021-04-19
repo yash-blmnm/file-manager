@@ -5,7 +5,7 @@ import {
   } from "react-router-dom";
 import 'antd/dist/antd.css';
 
-const { SubMenu } = Menu;
+// const { SubMenu } = Menu;
 
 
 
@@ -14,14 +14,17 @@ function FolderItemList ({folderList = {}, keyVal}) {
         Object.keys(folderList).map((keyName) => {
         // folderList && folderList.map((folder, id) => {
             const folder = folderList[keyName];
-            return((folder.content && folder.content.length) ? 
-            <SubMenu key={`sub${keyName}`} icon={<FolderOutlined />} title={<Link to={folder.path}>{folder.name}</Link>}>
-                <FolderItemList folderList ={folder.content} keyVal={keyVal+ 1} />
-            </SubMenu>
-            : 
-            <Menu.Item key={keyName} icon={<FolderOutlined />}>
+            // return((folder.content && folder.content.length) ? 
+            // <SubMenu key={`sub${keyName}`} icon={<FolderOutlined />} title={<Link to={folder.path}>{folder.name}</Link>}>
+            //     {/* <FolderItemList folderList ={folder.content} keyVal={keyVal+ 1} /> */}
+            // </SubMenu>
+            // : 
+            return(
+            // <Menu.Item key={keyName} icon={<FolderOutlined />}>
                 <Link to={folder.path}>{folder.name}</Link>
-            </Menu.Item>)
+            // </Menu.Item>
+            )
+            // )
         })
     )
             
