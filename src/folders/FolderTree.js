@@ -12,8 +12,9 @@ const useStyles = makeStyles({
   root: {
     height: 110,
     flexGrow: 1,
-    maxWidth: 400,
-    color: '#fff'
+    maxWidth: 280,
+    color: '#fff',
+    margin: '20px 0'
   },
   item: {
     overflow: 'hidden',

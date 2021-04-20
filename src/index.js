@@ -7,7 +7,7 @@ import { ReactReduxFirebaseProvider } from 'react-redux-firebase'
 
 ReactDOM.render(
   <Provider store={store}>
-    <ReactReduxFirebaseProvider {...rrfProps}>
+    <ReactReduxFirebaseProvider {...rrfProps}>  {/* PRovider that helps interact with firebase data */}
       <App />
     </ReactReduxFirebaseProvider>
   </Provider>,

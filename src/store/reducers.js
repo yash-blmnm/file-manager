@@ -144,10 +144,6 @@ export const getAllFolders = () => {
 }}
 
 
-// export const removeFolder = folder => ({
-//     type: REMOVE_FOLDER,
-//     payload: folder
-// })
 
 
 export const getCurrentFolder = path => {
@@ -157,6 +153,5 @@ export const getCurrentFolder = path => {
             type: GET_CURRENT_FOLDER,
             payload: { path }
         })
-    // });
     }
 }

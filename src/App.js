@@ -3,21 +3,13 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  useLocation,
-  Link
 } from "react-router-dom";
 import FolderView from './folders/FolderView'
-import Siderbar from './folders/Siderbar'
 import RecursiveTreeView from './folders/FolderTree'
-// import Grid from '@material-ui/core/Grid';
-import { Layout, Menu, Breadcrumb } from 'antd';
+import { Layout } from 'antd';
 import './App.css'
-import { getAllFolders } from './store/reducers';
 import { connect} from 'react-redux';
-import { useState, useEffect } from 'react';
-// import { isLoaded } from "react-redux-firebase";
-// import { getTodos } from "./redux/selectors";
-import { firebaseConnect, isLoaded, isEmpty } from 'react-redux-firebase'
+import { firebaseConnect, isLoaded } from 'react-redux-firebase'
 import { compose } from 'redux';
 import BreadCrumbComp from './folders/BreadCrumbComp';
 const { Header, Content, Footer, Sider } = Layout;
@@ -32,8 +24,9 @@ function App({ isLoaded }) {
     <Router>
       <Route path="/">
         <Layout>
-          <Sider style={{width: 'auto', maxWidth: 'none', flex: 'none'}} breakpoint="lg" collapsedWidth="0" onBreakpoint={broken => {console.log(broken);}} onCollapse={(collapsed, type) => { console.log(collapsed, type); }}>
-            <RecursiveTreeView />
+          <Sider width={300} style={{width: 'auto', maxWidth: 'none', flex: 'none'}} breakpoint="lg" collapsedWidth="0" onBreakpoint={broken => {console.log(broken);}} onCollapse={(collapsed, type) => { console.log(collapsed, type); }}>
+            <RecursiveTreeView /> 
+            {/* Nested Tree structure to display all files and folders */}
           </Sider>
         <Layout>
           <Header className="site-layout-sub-header-background" style={{ padding: '0 20px', color: '#fff', textAlign: 'center', verticalAlign: 'middle' }} title={'My Directory'}>
@@ -61,6 +54,7 @@ function App({ isLoaded }) {
   );
 }
 
+// Method that loads data from firebase
 const enhance = compose(
   firebaseConnect((props) => [
     { path: 'folders' }
