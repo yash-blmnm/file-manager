@@ -1,3 +1,4 @@
+import React from 'react';
 import { Menu } from'antd'
 import { FolderOutlined } from '@ant-design/icons';
 import {
@@ -21,7 +22,7 @@ function FolderItemList ({folderList = {}, keyVal}) {
             // : 
             return(
             // <Menu.Item key={keyName} icon={<FolderOutlined />}>
-                <Link to={folder.path}>{folder.name}</Link>
+                <><br /> <Link to={folder.path}>{folder.name}</Link> <br /></>
             // </Menu.Item>
             )
             // )

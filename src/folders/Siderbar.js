@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useReducer, useEffect } from 'react';
 import { connect } from 'react-redux'
 import { Menu } from'antd'
@@ -14,9 +15,9 @@ function Siderbar ({ folders = [] }) {
 
     return (
         <>
-            <Menu theme="dark" mode="inline" defaultSelectedKeys={['4']}>
+            {/* <Menu theme="dark" mode="inline" defaultSelectedKeys={['4']}> */}
                 <FolderItemList folderList = {folders} />
-            </Menu>
+            {/* </Menu> */}
         </>
     );
 }

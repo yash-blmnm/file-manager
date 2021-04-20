@@ -1,15 +1,11 @@
 import React from 'react';
 import { useState, useReducer, useEffect } from 'react';
-import { useLocation } from "react-router-dom";
-import { makeStyles } from '@material-ui/core/styles';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import FolderIcon from '@material-ui/icons/Folder';
+import { useLocation, Link } from "react-router-dom";
+import {List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import FolderRoundedIcon from '@material-ui/icons/FolderRounded';
 import CreateNewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import { connect } from 'react-redux'
-import { getCurrentFolder } from '../store/reducers';
+import { getCurrentFolder, deleteFolders } from '../store/reducers';
 import Folder from './Folder';
 // import { firebase } from '../fconfig';
 import { compose } from 'redux' // can also come from recompose
@@ -19,95 +15,167 @@ import { withFirebase } from 'react-redux-firebase'
 import { useSelector } from 'react-redux'
 import { useFirebaseConnect, isLoaded, isEmpty } from 'react-redux-firebase'
 import { useFirebase, firebaseConnect } from 'react-redux-firebase'
-import { withRouter } from "react-router";
+// import { withRouter } from "react-router";
+import MyDropzone from './FileUpload'
+import { GridList, GridListTile, GridListTileBar, IconButton, Button, Checkbox} from '@material-ui/core';
+import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
+import InfoIcon from '@material-ui/icons/Info'
+import DeleteIcon from '@material-ui/icons/Delete'
+import EditIcon from '@material-ui/icons/Edit'
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload'
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import '../style/FolderItem.css';
+import FolderRenameForm from './FolderRenameForm'
+import { ThemeProvider } from '@material-ui/core/styles';
+import DescriptionIcon from '@material-ui/icons/Description';
 
-
-
-
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme) =>
+  createStyles({
     root: {
-      width: '100%',
-      maxWidth: 360,
+      display: 'flex',
+      flexWrap: 'wrap',
+      justifyContent: 'space-around',
+      overflow: 'hidden',
       backgroundColor: theme.palette.background.paper,
     },
-    nested: {
-      paddingLeft: theme.spacing(4),
+    gridList: {
+      width: '100%',
+      height: '100vh',
     },
-}));
-  
+    gridItem: {
+        margin: '0px 10px 20px', 
+    },
+    list: {
+        padding: 0,
+        margin: 0,
+        right: 0,
+        position: 'absolute'
+    }
+  }),
+);
 
-const FolderView =  ( {currentFolder, getCurFolder} ) => {
-    // const folders = dB.ref("folders");
-    // console.log(folders);
-    
-    // console.log(firebase);
+
+const FolderView =  ( {currentFolder, getCurFolder, deleteSelectedFolders} ) => {
     const location = useLocation();
-    // const reference = location.pathname !== '/' ? location.pathname.replaceAll('/', '/content/') : location.pathname
-    // const firebase = useFirebase()
-    // const storageRef = firebase.storage().ref(reference)
-    // console.log(storageRef.child());
-    // useFirebaseConnect([
-    //     { path: `${reference}/content` }
-    //   ])
-    // const currentFolder = useSelector((state) => {
-    //     console.log(state);
-    //     return ({...state, current: state.firebase.ordered})
-    // })
-    // console.log(currentFolder)
+    const pathname = location.pathname;
     const classes = useStyles();
-    const [open, setOpen] = useState(false);
-    // const pathNames = window.location.pathname ? window.location.pathname.split('/') : [];
-    const handleClick = () => {
-        setOpen(!open);
-    };
-    console.log(location);
-    useEffect(() => {
-        // console.log(123);
-        // // if(folders.path){
-        getCurFolder(location.pathname);
-        // // }
-        
-    }, [location.pathname]);
+    const [uploadFile, setUploadFile] = useState(false);
+    const [createFolder, setCreateFolder] = useState(false);
+    const [selectAll, setSelectAll] = useState(false);
+    const [selectedIds, setSelectedIds] = useState([])
+    const [classStateDel, setClassStateDel] = useState('')
 
-    // React.useEffect(() => { addTodo(location.pathname) }, [])
+    useEffect(() => {
+        getCurFolder(pathname);
+        
+    }, [pathname]);
+
+    const folderDelete = (e) => {
+        deleteSelectedFolders(selectedIds, pathname)
+        setSelectAll(false)
+        setClassStateDel('')
+        setSelectedIds([])
+    }
+
+    const handleChange = (e) => {
+        let name = e.target.name
+        if(selectedIds.indexOf(name) > -1) {
+            setSelectedIds(selectedIds.filter(id => id !== name))
+        }else {
+            setSelectedIds([...selectedIds, e.target.name])
+        }
+        setClassStateDel('folder-grid-delete')
+    }
+
     
-    // const removeFolder = (id) => {
-    //     console.log("Remove");
-    // }
-    // if(!isLoaded(currentFolder)) {
-    //     return('Loading...')
-    // }
 
     return (
-        <>
-            <List component="nav" aria-labelledby="nested-list-subheader" className={classes.root}>
+        <div className={classes.root}>
+            <div clsss="group-event" style={{right: '40px', position: 'absolute'}}>
+                {!selectAll ? <Button color="primary" onClick={() => setSelectAll(true)}>Select</Button>: 
+                <IconButton aria-label={`delete`}  onClick={folderDelete}><DeleteIcon fontSize="small"/> </IconButton>
+                }
+            </div>
+            
+            
+            <GridList cellHeight={160} className={classes.gridList} cols={6}>
                 {currentFolder.content && Object.keys(currentFolder.content).map((key, i) => {
                     const folder = currentFolder.content[key];
-                    return(<ListItem key={folder.name}>
-                        <ListItemIcon> <FolderIcon /> </ListItemIcon>
-                        <ListItemText primary={folder.name} />
-                    </ListItem>)
+                    return (
+                    // <FolderItem folder={folder} cName={classes}/>)
+                    <GridListTile className={`${classes.gridItem} folder-grid-item ${(selectedIds.indexOf(folder.name) > -1) ? classStateDel : ''}`} 
+                    key={key} cols={ 1} title={folder.name}>
+                        {selectAll ?  <Checkbox
+                            checked={selectedIds.indexOf(folder.name) > -1}
+                            onChange={handleChange}
+                            name={folder.name}
+                            color="primary"
+                        /> :
+                        <List className={`${classes.list} folder-edit-options`}>
+                            {/* <ListItem key={1}>
+                                <IconButton aria-label={`edit`} onClick={folderRename}>
+                                    <EditIcon fontSize="small"/>
+                                </IconButton>
+                            </ListItem>
+                            <ListItem key={2}>
+                                <IconButton aria-label={`delete`} >
+                                    <DeleteIcon fontSize="small"/>
+                                </IconButton>
+                            </ListItem> */}
+                            {folder.type && folder.type != 'folder' ?
+                                <ListItem key={3}>
+                                    <IconButton aria-label={`download`} href={folder.downloadURL} download={folder.name}>
+                                        <CloudDownloadIcon fontSize="small"/>
+                                    </IconButton>
+                                </ListItem>
+                            :
+                             ''
+                            }
+                            
+                        </List>}
+                        <span className="folder-grid-content">
+                        {folder.type && folder.type !== "folder" ?
+                            (folder.type.match(/image/g)) ?
+                            <a href={folder.downloadURL} download={folder.name}>
+                                <img className="asset" src={folder.downloadURL} alt={folder.name} />
+                            </a>
+                            : 
+                            <DescriptionIcon fontSize="large" className="folder-icon"/>
+                            
+                        : <Link to={folder.path}><FolderRoundedIcon fontSize="large" className="folder-icon"/></Link>
+                        }</span>
+                        
+                        <GridListTileBar className="folder-title-bar" title={
+                            <FolderRenameForm folder={folder}/>} actionIcon={
+                            <IconButton aria-label={`info about info`} className="folder-info-icon">
+                            <InfoIcon />
+                            </IconButton>
+                        }>
+                        </GridListTileBar>
+                    </GridListTile>
+                    )
                 })}
-                <ListItem key={currentFolder && currentFolder.length + 1}>
-                    <ListItemIcon> <CreateNewFolderIcon onClick={handleClick}/> </ListItemIcon>
-                    {
-                        open ?
-                            <ListItemText> <Folder /> </ListItemText>
-                         : ''
+                <GridListTile className={`${classes.gridItem} folder-grid-item`} key={34} cols={ 1} title={'create'}>
 
-                    }
-                </ListItem>
-            </List> 
-        </>    
+                {createFolder ? 
+                <Folder /> :
+                <IconButton onClick={() => {setUploadFile(false); setCreateFolder(!createFolder)}}>
+                    <CreateNewFolderIcon fontSize="large"/>
+                </IconButton>}
+                {uploadFile ? 
+                <MyDropzone/> : 
+                <IconButton onClick={() => {setUploadFile(!uploadFile); setCreateFolder(false)}}>
+                    <CloudUploadIcon fontSize="large" />
+                </IconButton>}
+                </GridListTile>
+            </GridList>
+        </div>
     );
 }
 
 const mapStateToProps = (state, props) => {
-    console.log(props)
-    // console.log(props.location);
+    console.log(state);
     const location = window.location ;
-    // console.log(state, ownProps);
-    // const location = useLocation();
     const reference = location.pathname !== '/' ? location.pathname.replaceAll('/', '/content/') : location.pathname;
     const referenceList = reference.split("/")
     return {
@@ -117,8 +185,8 @@ const mapStateToProps = (state, props) => {
 };
 
 function getCurrentFolders(tree, referenceList) {
+    console.log(tree, referenceList)
     let path = referenceList.shift();
-    // const folder = path.trim().length ? tree[path] : tree;
     if(path.trim().length) {
         const folder = tree[path];
         if(!referenceList.length) {
@@ -137,44 +205,17 @@ function getCurrentFolders(tree, referenceList) {
             return getCurrentFolders(tree, referenceList);
         }
     }
-    // if(!referenceList.length) {
-    //     return folder;
-    // } 
-    
-    // console.log(path, folder);
-    // if(!referenceList.length) {
-    //     return folder;
-    // } 
-    // return getCurrentFolders(folder.content, referenceList);
 
 }
 
 const mapDispatchToProps = (dispatch, state) => {
     console.log(state)
     return ({
-    getCurFolder: path => dispatch(getCurrentFolder(path, state))
+    getCurFolder: path => dispatch(getCurrentFolder(path, state)),
+    deleteSelectedFolders: (folderIds, path) => dispatch(deleteFolders(folderIds, path))
 })}
 
-// const enhance = compose(
-// firebaseConnect((props) => [
-//     { path: 'folders' }
-// ]),
-// connect((state) => {
-//     let folders = state.firebase.data.folders;
-//     console.log({...state, folders: {...state.folders, folders : state.firebase.data.folders}, isLoaded: isLoaded(folders)})
-//     return ({...state, folders: {...state.folders, folders : state.firebase.data.folders}, isLoaded: isLoaded(folders)})
-// }))
 
-// export default connect(mapStateToProps, mapDispatchToProps)(FolderView);
-// const enhance = compose(
-//     withFirebase,
-//     withHandlers({addTodo: state => (path) => {
-//         debugger;
-//         console.lor(state);
-//         return state.dispatch(getCurrentFolder(path))
-//     }})
-// )
 
-// export default withFirebase(FolderView);
 
-export default compose(connect(mapStateToProps, mapDispatchToProps), firebaseConnect(['folders']))(withRouter(FolderView))
+export default compose(connect(mapStateToProps, mapDispatchToProps), firebaseConnect(['folders']))(FolderView)
