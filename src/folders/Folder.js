@@ -7,17 +7,19 @@ import { useLocation } from "react-router-dom";
 import { createFolder } from './../store/reducers';
 import { config } from '../fconfig';
 
+
 function Folder({ currentFolder : {content} , onCreatePressed }) {
-    console.log(content);
+    const [form] = Form.useForm();
     const location = useLocation();
     const[name, setName] = useState('');
-    const createNewFolder = (values) => {
+    const createNewFolder = () => {
         const isDataValid = name.trim().length;
         const isDuplicateData = content && Object.keys(content).some(folder => folder.name === name);
         if(isDataValid && !isDuplicateData){
             const prevPath = location.pathname === "/" ? "" : location.pathname;
             onCreatePressed({name, path: `${prevPath}/${name}`, content: [], createdAt: String(new Date()), type: 'folder'});
             setName('');
+            form.resetFields();
         }
         
     }
@@ -25,10 +27,11 @@ function Folder({ currentFolder : {content} , onCreatePressed }) {
 
     return (
         <div className="App">
-            <Form name="basic" onFinish={(createNewFolder)} initialValues={{name : name}}>
+            <Form form={form} name="basic" onFinish={(createNewFolder)} initialValues={{name : name}}>
                 <Form.Item 
                     name="name" 
                     onChange={(e) => setName(e.target.value)}
+                    value={name}
                     rules={[{ required: true, message: 'Please input your file name!' }]}>
                     <Input />
                 </Form.Item>

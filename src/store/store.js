@@ -24,7 +24,7 @@ const rrfConfig = {
 firebase.initializeApp(config)
 
 // Initialize other services on firebase instance
-firebase.firestore() // <- needed if using firestore
+// firebase.firestore() // <- needed if using firestore
 // firebase.functions() // <- needed if using httpsCallable
 
 // Add firebase to reducers
@@ -49,13 +49,12 @@ const initialState = {
 }
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-export const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk.withExtraArgument( getFirebase))))
+export const store = createStore(rootReducer, initialState, composeEnhancers(applyMiddleware(thunk.withExtraArgument( getFirebase))))
 
 export const rrfProps = {
   firebase,
   config: rrfConfig,
   dispatch: store.dispatch,
-  createFirestoreInstance // <- needed if using firestore
 }
 
 

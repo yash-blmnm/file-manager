@@ -79,6 +79,15 @@ function changeOb(obj, path, data) {
     return o;
   }
 
+  function changeContentPaths(folder, newPath) {
+    if(folder.content && Object.entries(folder.content).length){
+        for(let f of Object.values(folder.content)){
+            changeContentPaths(f, `${newPath}/${f.name}`);
+        }
+    }else{
+        folder.path = newPath;
+    }
+  }
 
 export const  createFolder = (folder) => {
     const {path} = folder;
@@ -101,7 +110,7 @@ export const  createFolder = (folder) => {
 }
 export const  updateFolder = (oldPath, newPath, newFolder) => {
     console.log(oldPath, newPath, newFolder);
-    // const {path} = folder;
+    changeContentPaths(newFolder, newPath);
     return (dispatch, getState, getFirebase) => {
       return getFirebase()
         .ref(`folders${oldPath.replaceAll('/', '/content/')}`)

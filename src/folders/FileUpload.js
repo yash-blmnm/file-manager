@@ -15,16 +15,14 @@ function MyDropzone( { onCreatePressed } ) {
   const onDrop = useCallback(acceptedFiles => {
     setFileList([...fileList,...acceptedFiles])
     acceptedFiles.map(acceptedFile => {
-      console.log(acceptedFile.name);
-      let task = firebase.storage().ref(prevPath).child(acceptedFile.name).put(acceptedFile)
+      let task = firebase.storage().ref().child(acceptedFile.name).put(acceptedFile);
       task.on('state_changed', function (snapshot) {
         return console.log(Math.round(100 * snapshot.bytesTransferred / snapshot.totalBytes), task);
       }, function (error) {
         return console.log(error, task);
-      }, function () {
+      }, async function () {
         removeTask(task);
-        console.log(task);
-        const { name, contentType, fullPath} = task.snapshot.metadata;
+        const { name, contentType, fullPath} = await task.snapshot.metadata;
         return handleUploadSuccess({ name, contentType, fullPath });
       });
       uploadTasks.push(task);
@@ -42,7 +40,6 @@ function MyDropzone( { onCreatePressed } ) {
       .ref()
       .child(name)
       .getDownloadURL();
-    console.log(downloadURL, 'success');
     const updatedName = name.replace(/\.[^/.]+$/, "").replace(/[\(#\$\[\]\)\.\' ']/gm,"");
     // const prevPath = location.pathname === "/" ? "" : location.pathname;
     const ucuploadFile = onCreatePressed({name: updatedName, 
