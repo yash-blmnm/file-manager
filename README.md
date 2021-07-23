@@ -1,7 +1,8 @@
 File manager built using React, Redux and Firebase to imitate the Finder/My Folder in a laptop. Each Folder/File can be accessed separately using the route created using 'react-router-dom' library.
 
 Short demo of the app
-![Demo][https://user-images.githubusercontent.com/27405419/126749591-d99c9981-4e34-4497-8c70-1f28eb1af5c2.mp4]
+
+![Demo](https://user-images.githubusercontent.com/27405419/126749591-d99c9981-4e34-4497-8c70-1f28eb1af5c2.mp4)
 
 
 To run the project 
