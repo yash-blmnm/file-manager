@@ -1,3 +1,9 @@
+File manager built using React, Redux and Firebase to imitate the Finder/My Folder in a laptop. Each Folder/File can be accessed separately using the route created using 'react-router-dom' library.
+
+Short demo of the app
+![Demo][https://user-images.githubusercontent.com/27405419/126749591-d99c9981-4e34-4497-8c70-1f28eb1af5c2.mp4]
+
+
 To run the project 
  - Go to the project directory and install packages using command 'yarn'
  - Start the project usinh 'yarn start'
@@ -22,5 +28,6 @@ Inside the project,
  Firebase - Cloud data storage Tool
  Frontend Design Templates - Antd design and Material UI package
  File Upload Package Used - Dropzone
+
 
  
